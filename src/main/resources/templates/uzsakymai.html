@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Užsakymai</title>
+    <meta charset="utf-8">
+		<style>
+			.anuliuotas, .sanuliuotas {
+				background-color: lightblue;
+			}
+			.ivykdytas, .sivykdytas {
+				background-color: lightgreen;
+			}
+		</style>
+	    <script
+		src="https://code.jquery.com/jquery-3.4.1.min.js"
+		integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+		crossorigin="anonymous">
+	    </script>
+	    <script src="uzsakymai.js">
+	    
+	    </script>
+</head>
+<body>
+	<form action="">
+		Patiekalo pavadinimas<br>
+		<input type="text" id="pav" value=""><br><br>
+		Trukmė ruošimo<br>
+		<input type="text" id="trukme_ruosimo" value=""><br><br>
+		Trukmė kaitinimo<br>
+		<input type="text" id="trukme_kaitinimo" value=""><br><br>
+		Pastabos<br>
+		<input type="text" id="pastabos" value=""><br><br>
+		<input type="button" id="naujas_uzsakymas" value="Užsakyti">
+	</form>
+	<div id="uzsakymai">
+	</div>
+</body>
+</html>
