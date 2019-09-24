@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity // This tells Hibernate to make a table out of this class
 
@@ -22,20 +22,15 @@ public class Kategorijos {
 
     private String pav;
     
-    // @OneToMany(mappedBy = "patiekalai",cascade = CascadeType.ALL)
+    /*
+     * nereikalinga ko gero si vieta???
     @JsonIgnoreProperties("kategorijos") 
     @OneToMany(mappedBy = "kategorijos",cascade = CascadeType.ALL)
     //private List<Patiekalu_produktai> patiekalu_produktai;  ar reikalinga eilutė?
+    */
+    @Column(nullable=true)
+    private Integer id_parent;
     
-	public Skirstymas() {
-    	
-	}
-	
-	public Kategorijos(String pav) {
-    	
-    	this.pav = pav;
-    	
-	}
     
 	public Integer getId() {
 		return id;
@@ -52,8 +47,16 @@ public class Kategorijos {
 	public void setPav(String pav) {
 		this.pav = pav;
 	}
+	
+	public Integer getId_parent() {
+		return id_parent;
+	}
 
+	public void setId_parent(Integer id_parent) {
+		this.id_parent = id_parent;
+	}
 
+	/*
 	public List<Kategoriju_sarasas> getKategoriju_sarasas() {
 		
 		return kategoriju_sarasas;
@@ -69,5 +72,5 @@ public class Kategorijos {
 	    return this.id + " / " + this.pav + " / "
 	    		
 	}
-	
+	*/
 }

@@ -22,8 +22,10 @@
 		this.params.url_delete_rec = params.url_delete_rec;
 		
 		this.params.ed_fields = params.fields_edit;
+		this.params.ed_types = params.fields_ed_types;
 		
-		this.params.field_name = params.field_name;
+		this.params.field_name = params.field_name;		
+																														// alert ( this.params.id_html_saraso );
 	}
 		
 	crud.prototype.initEmpty = function() {
@@ -46,12 +48,12 @@
 	}
 	
 	crud.prototype.resetDialogs = function() {
-		/*
-		if ( this.params.hasOwnProperty ( 'dialog' ) && ( this.params.dialog != null ) ) {
-		
-			this.params.dialog.dialog( 'destroy' );
-		}	
-		*/
+																														/*
+																														if ( this.params.hasOwnProperty ( 'dialog' ) && ( this.params.dialog != null ) ) {
+																														
+																															this.params.dialog.dialog( 'destroy' );
+																														}	
+																														*/
 		if ( this.params.hasOwnProperty ( 'confirm' ) && ( this.params.confirm != null ) ) {
 		
 			this.params.confirm.dialog( 'destroy' );
@@ -59,7 +61,7 @@
 		
 	}
 
-	//	this.initEmpty();
+																														//	this.initEmpty();
 		
 	crud.prototype.refreshData = function() {
 		
@@ -76,14 +78,12 @@
 				function( data ) {
 
 					i_am.params.data = data;
-																																	// alert ( 'this.data 1 ' +JSON.stringify ( i_am.params.data  ) );
+																														// alert ( 'this.data 1 ' +JSON.stringify ( i_am.params.data  ) );
 					i_am.sarasas();
 				}
 			);
 	}
-		
-	//	this.refreshData();		
-
+																														//	this.refreshData();
 	crud.prototype.sarasas = function() {
 		
 		var i_am = this;
@@ -118,11 +118,11 @@
 		
 		this.resetDialogs();
 		
+																														// alert ( this.params.id_html_saraso );
+		
 		$( '#' + this.params.id_html_saraso ).html( '' );
 
 		$( '#' + this.params.id_html_saraso ).html( this.params.res_str );
-		
-		
 		
 		this.initDialog();
 		this.edFields();
@@ -165,10 +165,32 @@
 		
 		for ( k=0; k < i_am.params.fields.length; k++ ) {
 			
-			field_val = eval (  'i_am.params.data' + i_am.params.field_data + '[ i_record ].' + i_am.params.fields [ k ] );
+			t =  i_am.params.ed_fields.indexOf ( i_am.params.fields [ k ] );
 			
+			if ( t > -1 ) {
+			
+				field_val = eval (  'i_am.params.data' + i_am.params.field_data + '[ i_record ].' + i_am.params.fields [ k ] );
+			
+				switch ( i_am.params.ed_types [ t ] ) {
+					
+					case 'textarea':
+					
+						$( '#' +  i_am.params.fields[ k ] ).html ( field_val );	break;
+					
+					case 'radio':
+					
+						$( 'input[name=' + i_am.params.fields[ k ] + ']' ).each ( function() {
+							
+							$( this ).prop ( 'selected', $( this ).val() == field_val );
+						});
+						
+						break;
+						
+					default:
 																													// alert (  i_am.params.fields [ k ]  + ': ' + field_val );
-			$( '#' +  i_am.params.fields[ k ] ).val ( field_val );
+						$( '#' +  i_am.params.fields[ k ]  ).val ( field_val );
+				}
+			}
 		}
 		
 		$( '#name_item' ).html ( eval (  'i_am.params.data' + i_am.params.field_data + '[ i_record ].' + i_am.params.field_name ) );
@@ -242,7 +264,7 @@
 				'<fieldset>'
 		;
 
-		this.htmDialogoEditFields( this );
+		this.htmDialogoEditFields( this, this.params.ed_fields );
 
 		this.params.res_str += 			
 		
@@ -276,28 +298,50 @@
 																																	// alert (i_am.params.fields[ k ] + ':' + fields_ignore.indexOf ( i_am.params.fields[ k ] ) );
 			if ( ( i_am.params.ed_fields.length > 0 ) && ( i_am.params.ed_fields.indexOf ( i_am.params.fields[ k ] ) > -1 ) ) {
 			
-			i_am.params.res_str += 
+				i_am.params.res_str += 
 			
-				'<label>' + i_am.params.fields_names [ k ].replace( '-<br>', '' ).replace ( '<br>', ' ' ).replace( '_', '' ) + '</label>' +
-					'<span id="del_' + i_am.params.fields[ k ] + '" class="text ui-widget-content ui-corner-all"></span>';
+					i_am.htmlDialogoEditFieldLabel ( i_am, k ) +
+					'<span id="del_' + i_am.params.fields[ k ] + 
+							'" class="text ui-widget-content ui-corner-all"></span>';
 			}
 		}
 	}
+	
+	
+	
+	crud.prototype.htmlDialogoEditFieldLabel = function ( i_am, k) {
 		
-	crud.prototype.htmDialogoEditFields = function( i_am ) {
+			return '<label for="' + i_am.params.fields[ k ] + '">' + 
+					i_am.params.fields_names [ k ].replace( '-<br>', '' ).replace ( '<br>', ' ' ).replace( '_', '' ) + 
+				'</label>';
+	}
+	/**
+	* @TODO perdaryti, kad veiktu ne su fields_ignore, o su tais laukais, kuriuos nurodai 
+	*/
+	crud.prototype.htmDialogoEditFields = function( i_am, fields_to_show ) {
 		
 		for ( k=0; k < i_am.params.fields.length; k++ ) {
 																																	// alert (i_am.params.fields[ k ] + ':' + fields_ignore.indexOf ( i_am.params.fields[ k ] ) );
-			if ( ( i_am.params.ed_fields.length > 0 ) && ( i_am.params.ed_fields.indexOf ( i_am.params.fields[ k ] ) > -1 ) ) {
+			if ( 
+					( i_am.params.ed_fields.length > 0 ) 
+				&& 
+					( i_am.params.ed_fields.indexOf ( i_am.params.fields[ k ] ) > -1 ) 
+				&& 
+					( fields_to_show.indexOf ( i_am.params.fields[ k ] ) != -1  ) 
+			) {
 			
 				i_am.params.res_str += 
 				
-					'<label for="' + i_am.params.fields[ k ] + '">' + i_am.params.fields_names [ k ].replace( '-<br>', '' ).replace ( '<br>', ' ' ).replace( '_', '' ) + '</label>' +
-						'<input type="text" name="' + i_am.params.fields[ k ] + '" id="' + i_am.params.fields[ k ] + '" value="" class="text ui-widget-content ui-corner-all">';
+					i_am.htmlDialogoEditFieldLabel( i_am, k ) +
+
+					'<input type="text" name="' + i_am.params.fields[ k ] +
+									'" id="' + i_am.params.fields[ k ] + 
+									'" value="" class="text ui-widget-content ui-corner-all">';
 			}
 		}		
 	}
-		
+	
+	
 		
 	crud.prototype.saveRecord = function( i_am ) {
 			
@@ -316,10 +360,14 @@
 		
 		for ( k=0; k < this.params.fields.length; k++ ) {
 			
-			if ( ( this.params.ed_fields.length > 0 ) && ( this.params.ed_fields.indexOf ( this.params.fields[ k ] ) > -1 ) ) {
+			if ( 
+					( this.params.ed_fields.length > 0 ) 
+				&& 
+					( this.params.ed_fields.indexOf ( this.params.fields[ k ] ) > -1 ) 
+			) {
 
-				this.params.o_ed_fields.push ( $ ( '#' + this.params.fields [ k ] ) );
-				this.params.allFields.add( this.params.o_ed_fields [ k ]  );
+				this.params.o_ed_fields.push ( $( '#' + this.params.fields [ k ] ) );
+				this.params.allFields.add ( this.params.o_ed_fields [ this.params.o_ed_fields.length - 1 ] );
 			}
 		}
 	}
@@ -337,7 +385,7 @@
 		
 		for ( k=0; k < i_am.params.ed_fields.length; k++ ) {
 			
-			params_str += '&' + i_am.params.ed_fields [ k ] + '=' + $( '#' + i_am.params.ed_fields [ k ] ).val();
+			params_str += '&' + i_am.params.ed_fields [ k ] + '=' + $( 'input[name=' + + i_am.params.ed_fields [ k ] + ']' ).val();
 		}
 																																// alert (  'saving'  + i_am.params.url_save_rec + params_str );
 			
@@ -422,7 +470,7 @@
 			
 		params_str = '?';
 		
-		if ( i_am.params.url_save_rec.indexOf ( '?' ) > -1 ) {
+		if ( i_am.params.url_delete_rec.indexOf ( '?' ) > -1 ) {
 		
 			params_str = '&';
 		}	
